@@ -1,0 +1,46 @@
+{
+  "name": "@spain-ai-kit/boe-mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server for BOE (Boletín Oficial del Estado) - Spanish legal documents",
+  "private": false,
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "boe-mcp-server": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aplaceforallmystuff/spain-ai-kit.git",
+    "directory": "mcp/boe"
+  },
+  "keywords": [
+    "mcp",
+    "spain",
+    "boe",
+    "legal",
+    "legislation",
+    "ai",
+    "claude"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "axios": "^1.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^2.0.0"
+  }
+}

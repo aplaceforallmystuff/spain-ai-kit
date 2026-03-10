@@ -1,0 +1,35 @@
+{
+  "name": "spain-ai-kit",
+  "version": "0.1.0",
+  "license": "MIT",
+  "private": true,
+  "description": "Spanish Government APIs MCP Servers - Monorepo",
+  "author": {
+    "name": "Jim Christian",
+    "url": "https://jimchristian.net"
+  },
+  "workspaces": [
+    "packages/*",
+    "mcp/*"
+  ],
+  "scripts": {
+    "build": "nx run-many --target=build --all",
+    "test": "nx run-many --target=test --all",
+    "lint": "nx run-many --target=lint --all",
+    "format": "prettier --write .",
+    "clean": "nx run-many --target=clean --all && rm -rf node_modules",
+    "dev": "nx run-many --target=dev --all --parallel"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "nx": "^21.4.0",
+    "prettier": "^3.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "axios": "^1.11.0"
+  }
+}
