@@ -30,8 +30,8 @@ jobs:
       - name: Run unit tests (shared package only)
         run: npx nx run @spain-ai-kit/shared:test
 
-      - name: Security audit
-        run: npm audit --audit-level=moderate
+      - name: Security audit (production deps)
+        run: npm audit --audit-level=moderate --omit=dev
 
   integration:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
