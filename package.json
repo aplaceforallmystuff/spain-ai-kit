@@ -18,15 +18,23 @@
     "lint": "nx run-many --target=lint --all",
     "format": "prettier --write .",
     "clean": "nx run-many --target=clean --all && rm -rf node_modules",
-    "dev": "nx run-many --target=dev --all --parallel"
+    "dev": "nx run-many --target=dev --all --parallel",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "nx": "^21.4.0",
     "prettier": "^3.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.9.0",
     "vitest": "^2.0.0"
+  },
+  "lint-staged": {
+    "**/*.ts": [
+      "prettier --check"
+    ]
   },
   "engines": {
     "node": ">=20"
