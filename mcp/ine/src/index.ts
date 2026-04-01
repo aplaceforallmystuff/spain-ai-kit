@@ -10,6 +10,7 @@ const API_BASE = 'https://servicios.ine.es/wstempus/js/ES/';
 const client = new BaseAPIClient({
   baseURL: API_BASE,
   cacheTTL: 10 * 60 * 1000, // 10 min — INE data updates infrequently
+  maxRequestsPerSecond: 10,
 });
 
 // --- INE API response types ---

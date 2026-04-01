@@ -11,6 +11,7 @@ const API_BASE = 'https://www.boe.es/datosabiertos/api/';
 const client = new BaseAPIClient({
   baseURL: API_BASE,
   cacheTTL: 5 * 60 * 1000,
+  maxRequestsPerSecond: 5,
 });
 
 const corpus = new CorpusIndex();

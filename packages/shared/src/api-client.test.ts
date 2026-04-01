@@ -71,3 +71,53 @@ describe('BaseAPIClient', () => {
     expect(mockGet).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('rate limiting', () => {
+  let client: BaseAPIClient;
+  let mockGet: ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
+    mockGet = await getMockGet();
+    mockGet.mockReset();
+    client = new BaseAPIClient({
+      baseURL: 'https://api.example.com/',
+      cacheTTL: 5000,
+      maxRetries: 2,
+    });
+  });
+
+  it('delays requests when rate limit is reached', async () => {
+    const rateLimitedClient = new BaseAPIClient({
+      baseURL: 'https://api.example.com/',
+      cacheTTL: 0,
+      maxRequestsPerSecond: 2,
+    });
+
+    mockGet.mockResolvedValue({ data: { ok: true } });
+
+    const start = Date.now();
+    await Promise.all([
+      rateLimitedClient.get('a'),
+      rateLimitedClient.get('b'),
+      rateLimitedClient.get('c'),
+    ]);
+    const elapsed = Date.now() - start;
+
+    expect(elapsed).toBeGreaterThanOrEqual(400);
+    expect(mockGet).toHaveBeenCalledTimes(3);
+  });
+
+  it('does not delay when rate limit is not set', async () => {
+    mockGet.mockResolvedValue({ data: { ok: true } });
+
+    const start = Date.now();
+    await Promise.all([
+      client.get('x'),
+      client.get('y'),
+      client.get('z'),
+    ]);
+    const elapsed = Date.now() - start;
+
+    expect(elapsed).toBeLessThan(200);
+  });
+});

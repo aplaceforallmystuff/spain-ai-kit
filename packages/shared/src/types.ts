@@ -43,4 +43,6 @@ export interface APIClientOptions {
   maxRetries?: number;
   /** Default cache TTL in ms (default: 300000 = 5 min) */
   cacheTTL?: number;
+  /** Max requests per second (default: unlimited). Enables token-bucket rate limiting. */
+  maxRequestsPerSecond?: number;
 }

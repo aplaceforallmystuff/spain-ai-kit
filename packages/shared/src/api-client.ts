@@ -10,10 +10,13 @@ export class BaseAPIClient {
   private cache = new Map<string, CacheEntry<unknown>>();
   private maxRetries: number;
   private cacheTTL: number;
+  private maxRPS: number;
+  private requestTimestamps: number[] = [];
 
   constructor(options: APIClientOptions) {
     this.maxRetries = options.maxRetries ?? 3;
     this.cacheTTL = options.cacheTTL ?? 5 * 60 * 1000;
+    this.maxRPS = options.maxRequestsPerSecond ?? 0;
 
     this.http = axios.create({
       baseURL: options.baseURL,
@@ -35,6 +38,7 @@ export class BaseAPIClient {
     }
 
     const ttl = config?.cacheTTL ?? this.cacheTTL;
+    await this.waitForRateLimit();
     const data = await this.fetchWithRetry<T>(path, config);
 
     if (ttl > 0) {
@@ -61,6 +65,25 @@ export class BaseAPIClient {
       await new Promise((r) => setTimeout(r, delay));
       return this.fetchWithRetry<T>(path, config, attempt + 1);
     }
+  }
+
+  private async waitForRateLimit(): Promise<void> {
+    if (this.maxRPS <= 0) return;
+
+    const now = Date.now();
+    const windowMs = 1000;
+
+    this.requestTimestamps = this.requestTimestamps.filter(t => now - t < windowMs);
+
+    if (this.requestTimestamps.length >= this.maxRPS) {
+      const oldestInWindow = this.requestTimestamps[0];
+      const waitMs = windowMs - (now - oldestInWindow);
+      if (waitMs > 0) {
+        await new Promise(r => setTimeout(r, waitMs));
+      }
+    }
+
+    this.requestTimestamps.push(Date.now());
   }
 
   clearCache(): void {
