@@ -3,7 +3,14 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod/v3';
-import { BaseAPIClient, parseXML, formatDateBOE, wrapToolHandler, validateBOEId, validateDateBOE, validateBlockId } from '@spain-ai-kit/shared';
+import {
+  BaseAPIClient,
+  parseXML,
+  wrapToolHandler,
+  validateBOEId,
+  validateDateBOE,
+  validateBlockId,
+} from '@spain-ai-kit/shared';
 import { CorpusIndex } from './corpus.js';
 
 const API_BASE = 'https://www.boe.es/datosabiertos/api/';
@@ -59,7 +66,10 @@ server.tool(
   'search_legislation',
   'Search Spanish consolidated legislation by keyword, date range, or scope. Returns matching laws with metadata. Keywords should be in Spanish.',
   {
-    query: z.string().optional().describe('Search keyword in Spanish (e.g., "extranjeros", "protección datos", "vivienda")'),
+    query: z
+      .string()
+      .optional()
+      .describe('Search keyword in Spanish (e.g., "extranjeros", "protección datos", "vivienda")'),
     from: z.string().optional().describe('Start date filter for last update (YYYYMMDD format)'),
     to: z.string().optional().describe('End date filter for last update (YYYYMMDD format)'),
     limit: z.number().optional().describe('Max results to return (default: 10, max: 50)'),
@@ -109,35 +119,41 @@ server.tool(
 
     if (!data.data || (Array.isArray(data.data) && data.data.length === 0)) {
       return {
-        content: [{
-          type: 'text' as const,
-          text: `No legislation found${query ? ` matching "${query}"` : ''}. Try different Spanish keywords.`,
-        }],
+        content: [
+          {
+            type: 'text' as const,
+            text: `No legislation found${query ? ` matching "${query}"` : ''}. Try different Spanish keywords.`,
+          },
+        ],
       };
     }
 
-    const results = (Array.isArray(data.data) ? data.data : [data.data]).map((law: BOELegislation) => ({
-      id: law.identificador,
-      title: law.titulo,
-      scope: law.ambito?.texto,
-      department: law.departamento?.texto,
-      type: law.rango?.texto,
-      dateEnacted: law.fecha_disposicion,
-      datePublished: law.fecha_publicacion,
-      dateEffective: law.fecha_vigencia,
-      consolidationStatus: law.estado_consolidacion?.texto,
-      expired: law.vigencia_agotada === 'S',
-      eli: law.url_eli,
-      htmlUrl: law.url_html_consolidada,
-    }));
+    const results = (Array.isArray(data.data) ? data.data : [data.data]).map(
+      (law: BOELegislation) => ({
+        id: law.identificador,
+        title: law.titulo,
+        scope: law.ambito?.texto,
+        department: law.departamento?.texto,
+        type: law.rango?.texto,
+        dateEnacted: law.fecha_disposicion,
+        datePublished: law.fecha_publicacion,
+        dateEffective: law.fecha_vigencia,
+        consolidationStatus: law.estado_consolidacion?.texto,
+        expired: law.vigencia_agotada === 'S',
+        eli: law.url_eli,
+        htmlUrl: law.url_html_consolidada,
+      })
+    );
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(results, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(results, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -153,12 +169,14 @@ server.tool(
 
     const parsed = parseXML(xml);
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(parsed, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(parsed, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -169,17 +187,19 @@ server.tool(
     validateBOEId(documentId);
     const data = await client.get<BOEDocumentResponse>(
       `legislacion-consolidada/id/${documentId}/metadatos`,
-      { headers: { Accept: 'application/json' } },
+      { headers: { Accept: 'application/json' } }
     );
 
     const doc = Array.isArray(data.data) ? data.data[0] : data.data;
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(doc, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(doc, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -190,17 +210,19 @@ server.tool(
     validateBOEId(documentId);
     const data = await client.get<BOEDocumentResponse>(
       `legislacion-consolidada/id/${documentId}/analisis`,
-      { headers: { Accept: 'application/json' } },
+      { headers: { Accept: 'application/json' } }
     );
 
     const doc = Array.isArray(data.data) ? data.data[0] : data.data;
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(doc, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(doc, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -211,17 +233,19 @@ server.tool(
     validateBOEId(documentId);
     const data = await client.get<BOEDocumentResponse>(
       `legislacion-consolidada/id/${documentId}/texto/indice`,
-      { headers: { Accept: 'application/json' } },
+      { headers: { Accept: 'application/json' } }
     );
 
     const doc = Array.isArray(data.data) ? data.data[0] : data.data;
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(doc, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(doc, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -239,17 +263,19 @@ server.tool(
       {
         headers: { Accept: 'application/xml' },
         responseType: 'text' as never,
-      },
+      }
     );
 
     const parsed = parseXML(xml);
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(parsed, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(parsed, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -265,12 +291,14 @@ server.tool(
 
     const parsed = parseXML(xml);
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(parsed, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(parsed, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -284,12 +312,14 @@ server.tool(
     });
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(data.data, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(data.data, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -303,12 +333,14 @@ server.tool(
     });
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(data.data, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(data.data, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -322,12 +354,14 @@ server.tool(
     });
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(data.data, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(data.data, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -341,12 +375,14 @@ server.tool(
     });
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(data.data, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(data.data, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 // --- Corpus Tools (legalize-es submodule) ---
@@ -356,7 +392,12 @@ server.tool(
   'Search the legalize-es legislation corpus (12,000+ Spanish laws as Markdown files). Searches full law text by keyword. Requires the legalize-es git submodule to be initialized.',
   {
     query: z.string().describe('Search keyword (in Spanish)'),
-    jurisdiction: z.string().optional().describe('Filter by jurisdiction folder (e.g., "es" for national, "es-vc" for Valencia). Default: all.'),
+    jurisdiction: z
+      .string()
+      .optional()
+      .describe(
+        'Filter by jurisdiction folder (e.g., "es" for national, "es-vc" for Valencia). Default: all.'
+      ),
     limit: z.number().optional().describe('Max results (default: 10)'),
   },
   wrapToolHandler(async ({ query, jurisdiction, limit }) => {
@@ -368,33 +409,43 @@ server.tool(
     if (results.length === 0) {
       if (!corpus.isAvailable()) {
         return {
-          content: [{
-            type: 'text' as const,
-            text: 'legalize-es corpus not found. Run `git submodule update --init` in the spain-ai-kit root to enable corpus search.',
-          }],
+          content: [
+            {
+              type: 'text' as const,
+              text: 'legalize-es corpus not found. Run `git submodule update --init` in the spain-ai-kit root to enable corpus search.',
+            },
+          ],
         };
       }
       return {
-        content: [{
-          type: 'text' as const,
-          text: `No laws found matching "${query}" in the corpus.`,
-        }],
+        content: [
+          {
+            type: 'text' as const,
+            text: `No laws found matching "${query}" in the corpus.`,
+          },
+        ],
       };
     }
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(results, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(results, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
   'read_corpus_law',
   'Read the full Markdown text of a specific law from the legalize-es corpus by its BOE identifier or filename.',
-  { identifier: z.string().describe('BOE document ID (e.g., "BOE-A-2000-544") or filename (e.g., "BOE-A-2000-544.md")') },
+  {
+    identifier: z
+      .string()
+      .describe('BOE document ID (e.g., "BOE-A-2000-544") or filename (e.g., "BOE-A-2000-544.md")'),
+  },
   wrapToolHandler(async ({ identifier }) => {
     const cleanId = identifier.replace('.md', '');
     validateBOEId(cleanId);
@@ -403,27 +454,33 @@ server.tool(
     if (!text) {
       if (!corpus.isAvailable()) {
         return {
-          content: [{
-            type: 'text' as const,
-            text: 'legalize-es corpus not found. Run `git submodule update --init` in the spain-ai-kit root to enable corpus reading.',
-          }],
+          content: [
+            {
+              type: 'text' as const,
+              text: 'legalize-es corpus not found. Run `git submodule update --init` in the spain-ai-kit root to enable corpus reading.',
+            },
+          ],
         };
       }
       return {
-        content: [{
-          type: 'text' as const,
-          text: `Law "${identifier}" not found in the corpus.`,
-        }],
+        content: [
+          {
+            type: 'text' as const,
+            text: `Law "${identifier}" not found in the corpus.`,
+          },
+        ],
       };
     }
 
     return {
-      content: [{
-        type: 'text' as const,
-        text,
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text,
+        },
+      ],
     };
-  }),
+  })
 );
 
 // --- Start ---

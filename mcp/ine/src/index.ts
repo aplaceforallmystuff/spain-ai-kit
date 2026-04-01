@@ -3,7 +3,13 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod/v3';
-import { BaseAPIClient, ineTimestampToISO, wrapToolHandler, validateNumericId, validateSeriesCode } from '@spain-ai-kit/shared';
+import {
+  BaseAPIClient,
+  ineTimestampToISO,
+  wrapToolHandler,
+  validateNumericId,
+  validateSeriesCode,
+} from '@spain-ai-kit/shared';
 
 const API_BASE = 'https://servicios.ine.es/wstempus/js/ES/';
 
@@ -81,19 +87,25 @@ server.tool(
     }));
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(formatted, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(formatted, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 // @ts-expect-error — MCP SDK deep type instantiation with zod generics
 server.tool(
   'search_operations',
   'Search INE statistical operations by keyword (in Spanish). Returns matching operations with their IDs.',
-  { query: z.string().describe('Search keyword (e.g., "población", "empleo", "precios", "turismo")') },
+  {
+    query: z
+      .string()
+      .describe('Search keyword (e.g., "población", "empleo", "precios", "turismo")'),
+  },
   wrapToolHandler(async ({ query }) => {
     const ops = await client.get<INEOperation[]>('OPERACIONES_DISPONIBLES', {
       cacheTTL: 60 * 60 * 1000,
@@ -101,17 +113,17 @@ server.tool(
 
     const q = query.toLowerCase();
     const matches = ops.filter(
-      (op) =>
-        op.Nombre.toLowerCase().includes(q) ||
-        op.Codigo.toLowerCase().includes(q),
+      (op) => op.Nombre.toLowerCase().includes(q) || op.Codigo.toLowerCase().includes(q)
     );
 
     if (matches.length === 0) {
       return {
-        content: [{
-          type: 'text' as const,
-          text: `No operations found matching "${query}". Try a different Spanish keyword.`,
-        }],
+        content: [
+          {
+            type: 'text' as const,
+            text: `No operations found matching "${query}". Try a different Spanish keyword.`,
+          },
+        ],
       };
     }
 
@@ -122,12 +134,14 @@ server.tool(
     }));
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(formatted, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(formatted, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -138,18 +152,24 @@ server.tool(
     validateNumericId(operationId, 'operation ID');
     const op = await client.get<INEOperation>(`OPERACION/${operationId}`);
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify({
-          id: op.Id,
-          code: op.Codigo,
-          name: op.Nombre,
-          ioeCode: op.Cod_IOE,
-          url: op.Url ? `https://www.ine.es${op.Url}` : undefined,
-        }, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(
+            {
+              id: op.Id,
+              code: op.Codigo,
+              name: op.Nombre,
+              ioeCode: op.Cod_IOE,
+              url: op.Url ? `https://www.ine.es${op.Url}` : undefined,
+            },
+            null,
+            2
+          ),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -169,12 +189,14 @@ server.tool(
     }));
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(formatted, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(formatted, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 // @ts-expect-error — MCP SDK deep type instantiation with zod generics
@@ -183,7 +205,10 @@ server.tool(
   'Get actual data from an INE table. Returns time series with values. Use nult parameter to limit to most recent data points.',
   {
     tableId: z.number().describe('Table ID (from list_tables)'),
-    nult: z.number().optional().describe('Number of most recent data points to return (default: 5)'),
+    nult: z
+      .number()
+      .optional()
+      .describe('Number of most recent data points to return (default: 5)'),
   },
   wrapToolHandler(async ({ tableId, nult }) => {
     validateNumericId(tableId, 'table ID');
@@ -204,12 +229,14 @@ server.tool(
     }));
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(formatted, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(formatted, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -234,12 +261,14 @@ server.tool(
     }));
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(formatted, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(formatted, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 server.tool(
@@ -257,12 +286,14 @@ server.tool(
     }));
 
     return {
-      content: [{
-        type: 'text' as const,
-        text: JSON.stringify(formatted, null, 2),
-      }],
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify(formatted, null, 2),
+        },
+      ],
     };
-  }),
+  })
 );
 
 // --- Start ---
