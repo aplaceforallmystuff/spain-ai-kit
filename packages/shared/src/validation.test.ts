@@ -1,15 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import {
   ValidationError,
+  validateAEMETArea,
   validateBOEId,
   validateBlockId,
   validateCadastralRef,
   validateCoordinate,
   validateDateBOE,
   validateMunicipalityCode,
+  validateMunicipioCode,
   validateNumericId,
   validateProvinceCode,
   validateSeriesCode,
+  validateStationId,
 } from './validation.js';
 
 describe('ValidationError', () => {
@@ -296,5 +299,100 @@ describe('validateCoordinate', () => {
 
   it('rejects -Infinity', () => {
     expect(() => validateCoordinate(-Infinity, 'latitude')).toThrow(ValidationError);
+  });
+});
+
+describe('validateMunicipioCode', () => {
+  it('accepts valid 5-digit codes', () => {
+    expect(() => validateMunicipioCode('28079')).not.toThrow();
+    expect(() => validateMunicipioCode('46250')).not.toThrow();
+    expect(() => validateMunicipioCode('00001')).not.toThrow();
+  });
+
+  it('accepts "id"-prefixed 5-digit codes', () => {
+    expect(() => validateMunicipioCode('id28079')).not.toThrow();
+    expect(() => validateMunicipioCode('id46250')).not.toThrow();
+  });
+
+  it('rejects empty string', () => {
+    expect(() => validateMunicipioCode('')).toThrow(ValidationError);
+  });
+
+  it('rejects codes with fewer than 5 digits', () => {
+    expect(() => validateMunicipioCode('2807')).toThrow(ValidationError);
+  });
+
+  it('rejects codes with more than 5 digits', () => {
+    expect(() => validateMunicipioCode('280790')).toThrow(ValidationError);
+  });
+
+  it('rejects non-numeric codes', () => {
+    expect(() => validateMunicipioCode('abcde')).toThrow(ValidationError);
+  });
+
+  it('throws ValidationError with descriptive message', () => {
+    expect(() => validateMunicipioCode('2807')).toThrow('Invalid municipio code "2807"');
+  });
+});
+
+describe('validateStationId', () => {
+  it('accepts valid alphanumeric station IDs', () => {
+    expect(() => validateStationId('3129')).not.toThrow();
+    expect(() => validateStationId('B228')).not.toThrow();
+    expect(() => validateStationId('ABC123')).not.toThrow();
+  });
+
+  it('rejects empty string', () => {
+    expect(() => validateStationId('')).toThrow(ValidationError);
+  });
+
+  it('rejects IDs with slashes', () => {
+    expect(() => validateStationId('stat/ion')).toThrow(ValidationError);
+  });
+
+  it('rejects IDs with special characters', () => {
+    expect(() => validateStationId('stat-ion')).toThrow(ValidationError);
+    expect(() => validateStationId('stat.ion')).toThrow(ValidationError);
+    expect(() => validateStationId('stat ion')).toThrow(ValidationError);
+  });
+
+  it('throws ValidationError with descriptive message', () => {
+    expect(() => validateStationId('stat/ion')).toThrow('Invalid station ID "stat/ion"');
+  });
+});
+
+describe('validateAEMETArea', () => {
+  it('accepts "esp" for all Spain', () => {
+    expect(() => validateAEMETArea('esp')).not.toThrow();
+  });
+
+  it('accepts valid region codes 61-79', () => {
+    expect(() => validateAEMETArea('61')).not.toThrow();
+    expect(() => validateAEMETArea('79')).not.toThrow();
+    expect(() => validateAEMETArea('70')).not.toThrow();
+  });
+
+  it('accepts fire risk codes "p" and "c"', () => {
+    expect(() => validateAEMETArea('p')).not.toThrow();
+    expect(() => validateAEMETArea('c')).not.toThrow();
+  });
+
+  it('rejects empty string', () => {
+    expect(() => validateAEMETArea('')).toThrow(ValidationError);
+  });
+
+  it('rejects out-of-range numeric codes', () => {
+    expect(() => validateAEMETArea('99')).toThrow(ValidationError);
+    expect(() => validateAEMETArea('60')).toThrow(ValidationError);
+    expect(() => validateAEMETArea('80')).toThrow(ValidationError);
+  });
+
+  it('rejects arbitrary strings', () => {
+    expect(() => validateAEMETArea('invalid')).toThrow(ValidationError);
+    expect(() => validateAEMETArea('ESP')).toThrow(ValidationError);
+  });
+
+  it('throws ValidationError with descriptive message', () => {
+    expect(() => validateAEMETArea('99')).toThrow('Invalid AEMET area code "99"');
   });
 });

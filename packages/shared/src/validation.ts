@@ -81,3 +81,49 @@ export function validateCoordinate(coord: number, label: string): void {
     throw new ValidationError(`Invalid ${label} coordinate "${coord}". Must be a finite number.`);
   }
 }
+
+export function validateMunicipioCode(code: string): void {
+  if (!/^(id)?\d{5}$/.test(code)) {
+    throw new ValidationError(
+      `Invalid municipio code "${code}". Must be 5 digits, optionally prefixed with "id" (e.g., "28079" or "id28079" for Madrid).`
+    );
+  }
+}
+
+export function validateStationId(id: string): void {
+  if (!/^[A-Za-z0-9]+$/.test(id)) {
+    throw new ValidationError(`Invalid station ID "${id}". Must be alphanumeric.`);
+  }
+}
+
+export function validateAEMETArea(area: string): void {
+  const validAreas = [
+    'esp',
+    '61',
+    '62',
+    '63',
+    '64',
+    '65',
+    '66',
+    '67',
+    '68',
+    '69',
+    '70',
+    '71',
+    '72',
+    '73',
+    '74',
+    '75',
+    '76',
+    '77',
+    '78',
+    '79',
+    'p',
+    'c',
+  ];
+  if (!validAreas.includes(area)) {
+    throw new ValidationError(
+      `Invalid AEMET area code "${area}". Use "esp" for all Spain, region codes 61-79, or "p"/"c" for fire risk.`
+    );
+  }
+}

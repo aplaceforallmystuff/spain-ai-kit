@@ -19,3 +19,6 @@ export {
 } from './validation.js';
 export { wrapToolHandler } from './error.js';
 export type { ToolResult } from './error.js';
+export { AEMETClient } from './aemet-client.js';
+export type { AEMETClientOptions } from './types.js';
+export { validateMunicipioCode, validateStationId, validateAEMETArea } from './validation.js';

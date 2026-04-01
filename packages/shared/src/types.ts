@@ -46,3 +46,7 @@ export interface APIClientOptions {
   /** Max requests per second (default: unlimited). Enables token-bucket rate limiting. */
   maxRequestsPerSecond?: number;
 }
+
+export interface AEMETClientOptions extends APIClientOptions {
+  apiKey: string;
+}
