@@ -2,6 +2,7 @@ import axios from 'axios';
 import { ValidationError } from './validation.js';
 
 export interface ToolResult {
+  [x: string]: unknown;
   content: Array<{ type: 'text'; text: string }>;
   isError?: boolean;
 }

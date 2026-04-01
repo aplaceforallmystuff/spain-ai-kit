@@ -3,7 +3,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod/v3';
-import { BaseAPIClient, parseXML, formatDateBOE } from '@spain-ai-kit/shared';
+import { BaseAPIClient, parseXML, formatDateBOE, wrapToolHandler, validateBOEId, validateDateBOE, validateBlockId } from '@spain-ai-kit/shared';
 import { CorpusIndex } from './corpus.js';
 
 const API_BASE = 'https://www.boe.es/datosabiertos/api/';
@@ -64,7 +64,9 @@ server.tool(
     limit: z.number().optional().describe('Max results to return (default: 10, max: 50)'),
     offset: z.number().optional().describe('Result offset for pagination (default: 0)'),
   },
-  async ({ query, from, to, limit, offset }) => {
+  wrapToolHandler(async ({ query, from, to, limit, offset }) => {
+    if (from) validateDateBOE(from);
+    if (to) validateDateBOE(to);
     const params: Record<string, string | number> = {
       limit: Math.min(limit ?? 10, 50),
       offset: offset ?? 0,
@@ -134,14 +136,15 @@ server.tool(
         text: JSON.stringify(results, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'get_document',
   'Get full metadata and legal analysis for a specific BOE document by its identifier (e.g., "BOE-A-2000-544").',
   { documentId: z.string().describe('BOE document identifier (e.g., "BOE-A-2000-544")') },
-  async ({ documentId }) => {
+  wrapToolHandler(async ({ documentId }) => {
+    validateBOEId(documentId);
     const xml = await client.get<string>(`legislacion-consolidada/id/${documentId}`, {
       headers: { Accept: 'application/xml' },
       responseType: 'text' as never,
@@ -154,14 +157,15 @@ server.tool(
         text: JSON.stringify(parsed, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'get_document_metadata',
   'Get metadata for a specific BOE document (title, dates, scope, department, status).',
   { documentId: z.string().describe('BOE document identifier') },
-  async ({ documentId }) => {
+  wrapToolHandler(async ({ documentId }) => {
+    validateBOEId(documentId);
     const data = await client.get<BOEDocumentResponse>(
       `legislacion-consolidada/id/${documentId}/metadatos`,
       { headers: { Accept: 'application/json' } },
@@ -174,14 +178,15 @@ server.tool(
         text: JSON.stringify(doc, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'get_document_analysis',
   'Get legal analysis for a BOE document — subjects, references to other laws, amendments, and legal relationships.',
   { documentId: z.string().describe('BOE document identifier') },
-  async ({ documentId }) => {
+  wrapToolHandler(async ({ documentId }) => {
+    validateBOEId(documentId);
     const data = await client.get<BOEDocumentResponse>(
       `legislacion-consolidada/id/${documentId}/analisis`,
       { headers: { Accept: 'application/json' } },
@@ -194,14 +199,15 @@ server.tool(
         text: JSON.stringify(doc, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'get_document_index',
   'Get the table of contents (article/section structure) of a consolidated law.',
   { documentId: z.string().describe('BOE document identifier') },
-  async ({ documentId }) => {
+  wrapToolHandler(async ({ documentId }) => {
+    validateBOEId(documentId);
     const data = await client.get<BOEDocumentResponse>(
       `legislacion-consolidada/id/${documentId}/texto/indice`,
       { headers: { Accept: 'application/json' } },
@@ -214,7 +220,7 @@ server.tool(
         text: JSON.stringify(doc, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
@@ -224,7 +230,9 @@ server.tool(
     documentId: z.string().describe('BOE document identifier'),
     blockId: z.string().describe('Article/section block ID (from get_document_index)'),
   },
-  async ({ documentId, blockId }) => {
+  wrapToolHandler(async ({ documentId, blockId }) => {
+    validateBOEId(documentId);
+    validateBlockId(blockId);
     const xml = await client.get<string>(
       `legislacion-consolidada/id/${documentId}/texto/bloque/${blockId}`,
       {
@@ -240,14 +248,15 @@ server.tool(
         text: JSON.stringify(parsed, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'get_daily_summary',
   'Get the BOE daily gazette summary for a specific date. Shows all official publications for that day.',
   { date: z.string().describe('Date in YYYYMMDD format (e.g., "20260328")') },
-  async ({ date }) => {
+  wrapToolHandler(async ({ date }) => {
+    validateDateBOE(date);
     const xml = await client.get<string>(`boe/sumario/${date}`, {
       headers: { Accept: 'application/xml' },
       responseType: 'text' as never,
@@ -260,14 +269,14 @@ server.tool(
         text: JSON.stringify(parsed, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'list_subjects',
   'List all subject/topic categories used to classify BOE legislation.',
   {},
-  async () => {
+  wrapToolHandler(async () => {
     const data = await client.get<BOEDocumentResponse>('datos-auxiliares/materias', {
       headers: { Accept: 'application/json' },
       cacheTTL: 60 * 60 * 1000, // 1 hour
@@ -279,14 +288,14 @@ server.tool(
         text: JSON.stringify(data.data, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'list_departments',
   'List all government departments that publish in the BOE.',
   {},
-  async () => {
+  wrapToolHandler(async () => {
     const data = await client.get<BOEDocumentResponse>('datos-auxiliares/departamentos', {
       headers: { Accept: 'application/json' },
       cacheTTL: 60 * 60 * 1000,
@@ -298,14 +307,14 @@ server.tool(
         text: JSON.stringify(data.data, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'list_scopes',
   'List legal scopes (e.g., Estatal, Autonómico) used to classify BOE legislation.',
   {},
-  async () => {
+  wrapToolHandler(async () => {
     const data = await client.get<BOEDocumentResponse>('datos-auxiliares/ambitos', {
       headers: { Accept: 'application/json' },
       cacheTTL: 60 * 60 * 1000,
@@ -317,14 +326,14 @@ server.tool(
         text: JSON.stringify(data.data, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'list_legal_ranks',
   'List legal document ranks/types (e.g., Ley Orgánica, Real Decreto, Constitución).',
   {},
-  async () => {
+  wrapToolHandler(async () => {
     const data = await client.get<BOEDocumentResponse>('datos-auxiliares/rangos', {
       headers: { Accept: 'application/json' },
       cacheTTL: 60 * 60 * 1000,
@@ -336,7 +345,7 @@ server.tool(
         text: JSON.stringify(data.data, null, 2),
       }],
     };
-  },
+  }),
 );
 
 // --- Corpus Tools (legalize-es submodule) ---
@@ -349,7 +358,7 @@ server.tool(
     jurisdiction: z.string().optional().describe('Filter by jurisdiction folder (e.g., "es" for national, "es-vc" for Valencia). Default: all.'),
     limit: z.number().optional().describe('Max results (default: 10)'),
   },
-  async ({ query, jurisdiction, limit }) => {
+  wrapToolHandler(async ({ query, jurisdiction, limit }) => {
     const results = await corpus.search(query, {
       jurisdiction,
       limit: limit ?? 10,
@@ -378,14 +387,16 @@ server.tool(
         text: JSON.stringify(results, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'read_corpus_law',
   'Read the full Markdown text of a specific law from the legalize-es corpus by its BOE identifier or filename.',
   { identifier: z.string().describe('BOE document ID (e.g., "BOE-A-2000-544") or filename (e.g., "BOE-A-2000-544.md")') },
-  async ({ identifier }) => {
+  wrapToolHandler(async ({ identifier }) => {
+    const cleanId = identifier.replace('.md', '');
+    validateBOEId(cleanId);
     const text = await corpus.readLaw(identifier);
 
     if (!text) {
@@ -411,7 +422,7 @@ server.tool(
         text,
       }],
     };
-  },
+  }),
 );
 
 // --- Start ---
