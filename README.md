@@ -82,6 +82,8 @@ Then ask Claude things like:
 - "Are there any weather alerts in Spain right now?"
 - "What's the UV index in Málaga today?"
 
+For detailed usage examples, tips, and troubleshooting, see the **[User Guide](docs/GUIDE.md)**.
+
 ## MCP Servers
 
 ### INE — National Statistics (`@spain-ai-kit/ine-mcp-server`)
