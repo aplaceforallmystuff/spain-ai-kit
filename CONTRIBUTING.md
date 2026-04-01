@@ -38,7 +38,7 @@ const client = new BaseAPIClient({
 // 2. Create MCP server
 const server = new McpServer({
   name: '@spain-ai-kit/<service>-mcp-server',
-  version: '0.1.0',
+  version: '0.1.0', // update to match package.json version
 });
 
 // 3. Define tools — ALWAYS wrap with wrapToolHandler

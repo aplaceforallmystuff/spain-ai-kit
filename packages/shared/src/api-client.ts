@@ -22,7 +22,7 @@ export class BaseAPIClient {
       baseURL: options.baseURL,
       timeout: options.timeout ?? 30_000,
       headers: {
-        'User-Agent': 'spain-ai-kit/0.1.0',
+        'User-Agent': 'spain-ai-kit/0.1.1',
       },
     });
   }

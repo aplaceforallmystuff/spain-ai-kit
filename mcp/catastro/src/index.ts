@@ -32,7 +32,7 @@ const coordenadas = new BaseAPIClient({
 
 const server = new McpServer({
   name: '@spain-ai-kit/catastro-mcp-server',
-  version: '0.1.0',
+  version: '0.1.2',
 });
 
 function extractCatastroError(parsed: Record<string, unknown>): string | null {

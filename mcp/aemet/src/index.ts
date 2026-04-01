@@ -22,7 +22,7 @@ const client = new AEMETClient({
 
 const server = new McpServer({
   name: '@spain-ai-kit/aemet-mcp-server',
-  version: '0.1.0',
+  version: '0.1.2',
 });
 
 // --- Municipality cache ---

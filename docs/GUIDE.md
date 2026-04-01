@@ -33,7 +33,7 @@ git clone --recurse-submodules https://github.com/aplaceforallmystuff/spain-ai-k
 cd spain-ai-kit
 npm install
 npm run build
-npm test   # 118 tests, all should pass
+npm test   # All tests should pass
 ```
 
 The `--recurse-submodules` flag pulls in [legalize-es](https://github.com/legalize-dev/legalize-es), a corpus of 12,000+ Spanish laws as Markdown. This enables the BOE server's `search_corpus` and `read_corpus_law` tools. Without the submodule, those two tools return a helpful setup message instead of failing.

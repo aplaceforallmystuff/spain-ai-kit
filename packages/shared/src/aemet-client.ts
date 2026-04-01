@@ -28,7 +28,7 @@ export class AEMETClient extends BaseAPIClient {
     }
 
     const response = await axios.get<T>(envelope.datos, {
-      headers: { 'User-Agent': 'spain-ai-kit/0.1.0' },
+      headers: { 'User-Agent': 'spain-ai-kit/0.1.1' },
       timeout: 30_000,
     });
 

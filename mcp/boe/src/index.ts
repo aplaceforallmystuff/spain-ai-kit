@@ -56,7 +56,7 @@ interface BOEDocumentResponse {
 
 const server = new McpServer({
   name: '@spain-ai-kit/boe-mcp-server',
-  version: '0.1.0',
+  version: '0.1.1',
 });
 
 // --- Live API Tools ---

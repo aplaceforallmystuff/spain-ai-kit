@@ -66,7 +66,7 @@ interface INEVariable {
 
 const server = new McpServer({
   name: '@spain-ai-kit/ine-mcp-server',
-  version: '0.1.0',
+  version: '0.1.1',
 });
 
 // --- Tools ---
