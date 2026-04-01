@@ -3,3 +3,13 @@ export { parseXML } from './xml.js';
 export { formatDateBOE, formatDateISO, ineTimestampToISO, validateNIF } from './utils.js';
 export { Jurisdiction } from './types.js';
 export type { APIClientOptions, CacheEntry } from './types.js';
+export {
+  ValidationError,
+  validateBOEId,
+  validateDateBOE,
+  validateNumericId,
+  validateSeriesCode,
+  validateBlockId,
+} from './validation.js';
+export { wrapToolHandler } from './error.js';
+export type { ToolResult } from './error.js';
