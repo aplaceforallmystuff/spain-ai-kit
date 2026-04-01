@@ -76,13 +76,22 @@ export class CorpusIndex {
             jurisdiction: dir,
           });
         }
-      } catch {
-        // Skip non-directories or permission errors
+      } catch (err) {
+        console.error(`Corpus: failed to read directory ${dirPath}:`, (err as Error).message);
       }
     }
 
     this.indexed = true;
-    console.error(`Corpus indexed: ${this.entries.length} laws across ${new Set(this.entries.map(e => e.jurisdiction)).size} jurisdictions`);
+    if (process.env.SPAIN_AI_KIT_DEBUG === '1') {
+      const jurisdictions = new Set(this.entries.map(e => e.jurisdiction));
+      console.error(`Corpus indexed: ${this.entries.length} laws across ${jurisdictions.size} jurisdictions`);
+      for (const j of [...jurisdictions].sort()) {
+        const count = this.entries.filter(e => e.jurisdiction === j).length;
+        console.error(`  ${j}: ${count} laws`);
+      }
+    } else {
+      console.error(`Corpus indexed: ${this.entries.length} laws`);
+    }
   }
 
   async search(query: string, options: SearchOptions = {}): Promise<SearchResult[]> {
@@ -119,8 +128,8 @@ export class CorpusIndex {
           jurisdiction: entry.jurisdiction,
           matchingLines,
         });
-      } catch {
-        // Skip unreadable files
+      } catch (err) {
+        console.error(`Corpus: failed to read ${entry.path}:`, (err as Error).message);
       }
     }
 
@@ -137,7 +146,8 @@ export class CorpusIndex {
 
     try {
       return await readFile(entry.path, 'utf-8');
-    } catch {
+    } catch (err) {
+      console.error(`Corpus: failed to read law ${entry.path}:`, (err as Error).message);
       return null;
     }
   }
