@@ -1,6 +1,6 @@
 {
   "name": "@spain-ai-kit/boe-mcp-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server for BOE (Boletín Oficial del Estado) - Spanish legal documents",
   "private": false,
   "main": "dist/index.js",

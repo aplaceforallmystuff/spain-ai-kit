@@ -1,6 +1,6 @@
 {
   "name": "@spain-ai-kit/catastro-mcp-server",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "MCP server for Catastro (Dirección General del Catastro) - Spanish Land Registry",
   "private": false,
   "main": "dist/index.js",
@@ -8,14 +8,26 @@
   "bin": {
     "catastro-mcp-server": "./dist/index.js"
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/aplaceforallmystuff/spain-ai-kit.git",
     "directory": "mcp/catastro"
   },
-  "keywords": ["mcp", "spain", "catastro", "cadastre", "property", "land-registry", "ai", "claude"],
+  "keywords": [
+    "mcp",
+    "spain",
+    "catastro",
+    "cadastre",
+    "property",
+    "land-registry",
+    "ai",
+    "claude"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
