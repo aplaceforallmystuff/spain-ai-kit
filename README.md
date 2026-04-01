@@ -29,6 +29,13 @@ Add to your Claude Desktop config (`claude_desktop_config.json`):
     "spain-catastro": {
       "command": "npx",
       "args": ["@spain-ai-kit/catastro-mcp-server"]
+    },
+    "spain-aemet": {
+      "command": "npx",
+      "args": ["@spain-ai-kit/aemet-mcp-server"],
+      "env": {
+        "AEMET_API_KEY": "your-api-key-here"
+      }
     }
   }
 }
@@ -50,10 +57,19 @@ Add to your Claude Desktop config (`claude_desktop_config.json`):
     "spain-catastro": {
       "command": "npx",
       "args": ["@spain-ai-kit/catastro-mcp-server"]
+    },
+    "spain-aemet": {
+      "command": "npx",
+      "args": ["@spain-ai-kit/aemet-mcp-server"],
+      "env": {
+        "AEMET_API_KEY": "your-api-key-here"
+      }
     }
   }
 }
 ```
+
+> **AEMET API Key:** The weather server requires a free API key. Get one in 30 seconds at [opendata.aemet.es](https://opendata.aemet.es/centrodedescargas/altaUsuario) — just enter your email. The other servers need no setup.
 
 Then ask Claude things like:
 - "What is the current CPI in Spain?"
@@ -62,6 +78,9 @@ Then ask Claude things like:
 - "What does the foreigners law say about residence permits?"
 - "What property is at this Madrid address?"
 - "Look up the cadastral reference for Puerta del Sol"
+- "What's the weather forecast for Valencia this week?"
+- "Are there any weather alerts in Spain right now?"
+- "What's the UV index in Málaga today?"
 
 ## MCP Servers
 
@@ -123,6 +142,25 @@ Connects to the [Dirección General del Catastro](https://www.catastro.hacienda.
 
 **Data source:** [Catastro OVC Web Services](https://ovc.catastro.meh.es/) — public, no authentication required.
 
+### AEMET — Weather (`@spain-ai-kit/aemet-mcp-server`)
+
+Connects to [AEMET OpenData](https://opendata.aemet.es/) for weather forecasts, observations, and alerts across Spain. Requires a free API key.
+
+| Tool | Description |
+|------|-------------|
+| `search_municipalities` | Search municipalities by name for forecast codes |
+| `list_municipalities` | List all 8,000+ Spanish municipalities |
+| `get_forecast_daily` | Daily weather forecast for a municipality |
+| `get_forecast_hourly` | Hourly forecast (48h) for a municipality |
+| `get_current_observations` | Current weather from all stations |
+| `get_station_observations` | Last 12h observations from a specific station |
+| `get_weather_alerts` | Active adverse weather alerts by region |
+| `get_beach_forecast` | Beach weather forecast |
+| `get_uv_index` | UV radiation index prediction |
+| `get_fire_risk` | Forest fire risk levels |
+
+**Data source:** [AEMET OpenData API](https://opendata.aemet.es/) — free API key required ([sign up](https://opendata.aemet.es/centrodedescargas/altaUsuario)).
+
 ## Legislation Corpus
 
 The BOE server optionally integrates with [legalize-es](https://github.com/legalize-dev/legalize-es), which provides the full consolidated text of 12,000+ Spanish laws as Markdown files with Git-tracked reform history.
@@ -164,7 +202,8 @@ spain-ai-kit/
 ├── mcp/
 │   ├── ine/              # INE Statistics MCP server
 │   ├── boe/              # BOE Legislation MCP server
-│   └── catastro/          # Catastro Land Registry MCP server
+│   ├── catastro/         # Catastro Land Registry MCP server
+│   └── aemet/            # AEMET Weather MCP server
 ├── packages/
 │   └── shared/           # Shared utilities (API client, types, XML parser)
 ├── corpus/
