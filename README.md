@@ -25,6 +25,10 @@ Add to your Claude Desktop config (`claude_desktop_config.json`):
     "spain-boe": {
       "command": "npx",
       "args": ["@spain-ai-kit/boe-mcp-server"]
+    },
+    "spain-catastro": {
+      "command": "npx",
+      "args": ["@spain-ai-kit/catastro-mcp-server"]
     }
   }
 }
@@ -42,6 +46,10 @@ Add to your Claude Desktop config (`claude_desktop_config.json`):
     "spain-boe": {
       "command": "npx",
       "args": ["@spain-ai-kit/boe-mcp-server"]
+    },
+    "spain-catastro": {
+      "command": "npx",
+      "args": ["@spain-ai-kit/catastro-mcp-server"]
     }
   }
 }
@@ -52,6 +60,8 @@ Then ask Claude things like:
 - "Search Spanish law about data protection"
 - "Show me employment statistics for Valencia"
 - "What does the foreigners law say about residence permits?"
+- "What property is at this Madrid address?"
+- "Look up the cadastral reference for Puerta del Sol"
 
 ## MCP Servers
 
@@ -95,6 +105,24 @@ Connects to the [Boletin Oficial del Estado](https://www.boe.es/) open data API 
 - [BOE Open Data API](https://www.boe.es/datosabiertos/) — public, no authentication required
 - [legalize-es](https://github.com/legalize-dev/legalize-es) — 12,000+ Spanish laws as Markdown, reform history tracked via Git
 
+### Catastro — Land Registry (`@spain-ai-kit/catastro-mcp-server`)
+
+Connects to the [Dirección General del Catastro](https://www.catastro.hacienda.gob.es/) web services. Property lookups, address resolution, and geocoding for all of Spain.
+
+| Tool | Description |
+|------|-------------|
+| `list_provinces` | List all Spanish provinces with codes |
+| `list_municipalities` | List municipalities in a province |
+| `list_streets` | List streets in a municipality |
+| `lookup_address` | Get cadastral reference for a street address |
+| `get_property` | Get property data by cadastral reference |
+| `get_property_by_parcel` | Get property data by polygon/parcel codes |
+| `get_coordinates` | Get lat/lon for a cadastral reference |
+| `get_reference_at_coordinates` | Reverse geocode: coordinates to cadastral reference |
+| `find_properties_nearby` | Find properties within distance of coordinates |
+
+**Data source:** [Catastro OVC Web Services](https://ovc.catastro.meh.es/) — public, no authentication required.
+
 ## Legislation Corpus
 
 The BOE server optionally integrates with [legalize-es](https://github.com/legalize-dev/legalize-es), which provides the full consolidated text of 12,000+ Spanish laws as Markdown files with Git-tracked reform history.
@@ -135,7 +163,8 @@ npm run format
 spain-ai-kit/
 ├── mcp/
 │   ├── ine/              # INE Statistics MCP server
-│   └── boe/              # BOE Legislation MCP server
+│   ├── boe/              # BOE Legislation MCP server
+│   └── catastro/          # Catastro Land Registry MCP server
 ├── packages/
 │   └── shared/           # Shared utilities (API client, types, XML parser)
 ├── corpus/
@@ -150,7 +179,6 @@ Future servers and features under consideration:
 
 | Service | Description | Auth |
 |---------|-------------|------|
-| **Catastro** | Property registry and cadastral data | No |
 | **datos.gob.es** | National open data portal (umbrella for many datasets) | No |
 | **AEAT** | Tax agency (declarations, obligations) | Cl@ve |
 | **CNMV** | Securities market commission | No |
