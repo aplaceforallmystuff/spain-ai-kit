@@ -1,0 +1,49 @@
+{
+  "name": "@spain-ai-kit/aemet-mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server for AEMET (Agencia Estatal de Meteorología) - Spanish Weather Service",
+  "private": false,
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "aemet-mcp-server": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aplaceforallmystuff/spain-ai-kit.git",
+    "directory": "mcp/aemet"
+  },
+  "keywords": [
+    "mcp",
+    "spain",
+    "aemet",
+    "weather",
+    "forecast",
+    "meteorology",
+    "ai",
+    "claude"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "@spain-ai-kit/shared": "*",
+    "axios": "^1.11.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^2.0.0"
+  }
+}
