@@ -28,6 +28,9 @@
     "typescript": "^5.9.0",
     "vitest": "^2.0.0"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.0",
     "axios": "^1.11.0",
