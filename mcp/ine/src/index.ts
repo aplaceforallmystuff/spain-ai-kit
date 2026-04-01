@@ -3,7 +3,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod/v3';
-import { BaseAPIClient, ineTimestampToISO } from '@spain-ai-kit/shared';
+import { BaseAPIClient, ineTimestampToISO, wrapToolHandler, validateNumericId, validateSeriesCode } from '@spain-ai-kit/shared';
 
 const API_BASE = 'https://servicios.ine.es/wstempus/js/ES/';
 
@@ -68,7 +68,7 @@ server.tool(
   'list_operations',
   'List all available statistical operations from INE (70+ datasets covering demographics, economics, employment, housing, tourism, etc.)',
   {},
-  async () => {
+  wrapToolHandler(async () => {
     const ops = await client.get<INEOperation[]>('OPERACIONES_DISPONIBLES', {
       cacheTTL: 60 * 60 * 1000, // 1 hour — this list rarely changes
     });
@@ -85,7 +85,7 @@ server.tool(
         text: JSON.stringify(formatted, null, 2),
       }],
     };
-  },
+  }),
 );
 
 // @ts-expect-error — MCP SDK deep type instantiation with zod generics
@@ -93,7 +93,7 @@ server.tool(
   'search_operations',
   'Search INE statistical operations by keyword (in Spanish). Returns matching operations with their IDs.',
   { query: z.string().describe('Search keyword (e.g., "población", "empleo", "precios", "turismo")') },
-  async ({ query }) => {
+  wrapToolHandler(async ({ query }) => {
     const ops = await client.get<INEOperation[]>('OPERACIONES_DISPONIBLES', {
       cacheTTL: 60 * 60 * 1000,
     });
@@ -126,14 +126,15 @@ server.tool(
         text: JSON.stringify(formatted, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'get_operation',
   'Get detailed metadata about a specific INE statistical operation by its ID.',
   { operationId: z.number().describe('Operation ID (from list_operations or search_operations)') },
-  async ({ operationId }) => {
+  wrapToolHandler(async ({ operationId }) => {
+    validateNumericId(operationId, 'operation ID');
     const op = await client.get<INEOperation>(`OPERACION/${operationId}`);
     return {
       content: [{
@@ -147,14 +148,15 @@ server.tool(
         }, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'list_tables',
   'List available data tables for a specific INE operation. Each table contains one or more time series.',
   { operationId: z.number().describe('Operation ID') },
-  async ({ operationId }) => {
+  wrapToolHandler(async ({ operationId }) => {
+    validateNumericId(operationId, 'operation ID');
     const tables = await client.get<INETable[]>(`TABLAS_OPERACION/${operationId}`);
 
     const formatted = tables.map((t) => ({
@@ -171,7 +173,7 @@ server.tool(
         text: JSON.stringify(formatted, null, 2),
       }],
     };
-  },
+  }),
 );
 
 // @ts-expect-error — MCP SDK deep type instantiation with zod generics
@@ -182,7 +184,8 @@ server.tool(
     tableId: z.number().describe('Table ID (from list_tables)'),
     nult: z.number().optional().describe('Number of most recent data points to return (default: 5)'),
   },
-  async ({ tableId, nult }) => {
+  wrapToolHandler(async ({ tableId, nult }) => {
+    validateNumericId(tableId, 'table ID');
     const n = nult ?? 5;
     const series = await client.get<INESeries[]>(`DATOS_TABLA/${tableId}`, {
       params: { nult: n },
@@ -205,7 +208,7 @@ server.tool(
         text: JSON.stringify(formatted, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
@@ -215,7 +218,8 @@ server.tool(
     seriesCode: z.string().describe('Series code (e.g., "IPC290751")'),
     nult: z.number().optional().describe('Number of most recent data points (default: 10)'),
   },
-  async ({ seriesCode, nult }) => {
+  wrapToolHandler(async ({ seriesCode, nult }) => {
+    validateSeriesCode(seriesCode);
     const n = nult ?? 10;
     const data = await client.get<INEDataPoint[]>(`SERIE/${seriesCode}`, {
       params: { nult: n },
@@ -234,14 +238,15 @@ server.tool(
         text: JSON.stringify(formatted, null, 2),
       }],
     };
-  },
+  }),
 );
 
 server.tool(
   'get_variable_values',
   'Get the possible values for an INE variable (e.g., list of provinces, age groups, nationalities).',
   { variableId: z.number().describe('Variable ID') },
-  async ({ variableId }) => {
+  wrapToolHandler(async ({ variableId }) => {
+    validateNumericId(variableId, 'variable ID');
     const values = await client.get<INEVariable[]>(`VALORES_VARIABLE/${variableId}`);
 
     const formatted = values.map((v) => ({
@@ -256,7 +261,7 @@ server.tool(
         text: JSON.stringify(formatted, null, 2),
       }],
     };
-  },
+  }),
 );
 
 // --- Start ---
