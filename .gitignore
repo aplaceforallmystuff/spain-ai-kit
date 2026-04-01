@@ -3,6 +3,14 @@ dist
 tmp
 out-tsc
 
+# stale build artifacts in src/ (tsconfig outputs to dist/)
+packages/*/src/*.js
+packages/*/src/*.js.map
+packages/*/src/*.d.ts
+mcp/*/src/*.js
+mcp/*/src/*.js.map
+mcp/*/src/*.d.ts
+
 # dependencies
 node_modules
 

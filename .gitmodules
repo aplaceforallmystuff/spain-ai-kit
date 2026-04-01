@@ -1,0 +1,3 @@
+[submodule "corpus/legalize-es"]
+	path = corpus/legalize-es
+	url = https://github.com/legalize-dev/legalize-es.git
