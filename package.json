@@ -40,8 +40,8 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.0",
-    "axios": "^1.11.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "axios": "^1.14.0",
     "fast-xml-parser": "^5.5.9"
   }
 }

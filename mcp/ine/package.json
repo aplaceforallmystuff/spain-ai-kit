@@ -33,9 +33,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@spain-ai-kit/shared": "*",
-    "axios": "^1.11.0",
+    "axios": "^1.14.0",
     "zod": "^3.25.0"
   },
   "devDependencies": {
