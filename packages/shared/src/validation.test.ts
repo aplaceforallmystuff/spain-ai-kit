@@ -3,8 +3,12 @@ import {
   ValidationError,
   validateBOEId,
   validateBlockId,
+  validateCadastralRef,
+  validateCoordinate,
   validateDateBOE,
+  validateMunicipalityCode,
   validateNumericId,
+  validateProvinceCode,
   validateSeriesCode,
 } from './validation.js';
 
@@ -49,9 +53,7 @@ describe('validateBOEId', () => {
   });
 
   it('throws ValidationError with descriptive message', () => {
-    expect(() => validateBOEId('bad-id')).toThrow(
-      'Invalid BOE document ID "bad-id"',
-    );
+    expect(() => validateBOEId('bad-id')).toThrow('Invalid BOE document ID "bad-id"');
   });
 });
 
@@ -93,9 +95,7 @@ describe('validateDateBOE', () => {
   });
 
   it('throws ValidationError with descriptive message', () => {
-    expect(() => validateDateBOE('2026-03-28')).toThrow(
-      'Invalid date "2026-03-28"',
-    );
+    expect(() => validateDateBOE('2026-03-28')).toThrow('Invalid date "2026-03-28"');
   });
 });
 
@@ -126,9 +126,7 @@ describe('validateNumericId', () => {
   });
 
   it('includes the label in the error message', () => {
-    expect(() => validateNumericId(0, 'operation ID')).toThrow(
-      'Invalid operation ID "0"',
-    );
+    expect(() => validateNumericId(0, 'operation ID')).toThrow('Invalid operation ID "0"');
   });
 });
 
@@ -165,9 +163,7 @@ describe('validateSeriesCode', () => {
   });
 
   it('throws ValidationError with descriptive message', () => {
-    expect(() => validateSeriesCode('IPC-290751')).toThrow(
-      'Invalid series code "IPC-290751"',
-    );
+    expect(() => validateSeriesCode('IPC-290751')).toThrow('Invalid series code "IPC-290751"');
   });
 });
 
@@ -213,8 +209,92 @@ describe('validateBlockId', () => {
   });
 
   it('throws ValidationError with descriptive message', () => {
-    expect(() => validateBlockId('block/id')).toThrow(
-      'Invalid block ID "block/id"',
-    );
+    expect(() => validateBlockId('block/id')).toThrow('Invalid block ID "block/id"');
+  });
+});
+
+describe('validateProvinceCode', () => {
+  it('accepts valid province codes', () => {
+    expect(() => validateProvinceCode('1')).not.toThrow();
+    expect(() => validateProvinceCode('28')).not.toThrow();
+    expect(() => validateProvinceCode('52')).not.toThrow();
+  });
+
+  it('rejects out-of-range codes', () => {
+    expect(() => validateProvinceCode('0')).toThrow(ValidationError);
+    expect(() => validateProvinceCode('53')).toThrow(ValidationError);
+  });
+
+  it('rejects non-numeric values', () => {
+    expect(() => validateProvinceCode('abc')).toThrow(ValidationError);
+    expect(() => validateProvinceCode('')).toThrow(ValidationError);
+  });
+
+  it('rejects 3+ digit strings', () => {
+    expect(() => validateProvinceCode('123')).toThrow(ValidationError);
+  });
+});
+
+describe('validateMunicipalityCode', () => {
+  it('accepts valid municipality codes', () => {
+    expect(() => validateMunicipalityCode('1')).not.toThrow();
+    expect(() => validateMunicipalityCode('50')).not.toThrow();
+    expect(() => validateMunicipalityCode('900')).not.toThrow();
+  });
+
+  it('rejects empty string', () => {
+    expect(() => validateMunicipalityCode('')).toThrow(ValidationError);
+  });
+
+  it('rejects non-numeric values', () => {
+    expect(() => validateMunicipalityCode('abcd')).toThrow(ValidationError);
+  });
+
+  it('rejects 4+ digit strings', () => {
+    expect(() => validateMunicipalityCode('1234')).toThrow(ValidationError);
+  });
+});
+
+describe('validateCadastralRef', () => {
+  it('accepts valid cadastral references', () => {
+    expect(() => validateCadastralRef('36050A07700004')).not.toThrow();
+    expect(() => validateCadastralRef('13077A01800039')).not.toThrow();
+    expect(() => validateCadastralRef('9872023VH5797S0001WX')).not.toThrow();
+  });
+
+  it('rejects empty string', () => {
+    expect(() => validateCadastralRef('')).toThrow(ValidationError);
+  });
+
+  it('rejects strings shorter than 14 characters', () => {
+    expect(() => validateCadastralRef('short')).toThrow(ValidationError);
+  });
+
+  it('rejects strings with spaces', () => {
+    expect(() => validateCadastralRef('has spaces     ')).toThrow(ValidationError);
+  });
+
+  it('rejects path traversal attempts', () => {
+    expect(() => validateCadastralRef('../../../')).toThrow(ValidationError);
+  });
+});
+
+describe('validateCoordinate', () => {
+  it('accepts valid finite coordinates', () => {
+    expect(() => validateCoordinate(40.4168, 'latitude')).not.toThrow();
+    expect(() => validateCoordinate(-3.7038, 'longitude')).not.toThrow();
+    expect(() => validateCoordinate(0, 'latitude')).not.toThrow();
+  });
+
+  it('rejects NaN', () => {
+    expect(() => validateCoordinate(NaN, 'latitude')).toThrow(ValidationError);
+  });
+
+  it('rejects Infinity', () => {
+    expect(() => validateCoordinate(Infinity, 'longitude')).toThrow(ValidationError);
+  });
+
+  it('rejects -Infinity', () => {
+    expect(() => validateCoordinate(-Infinity, 'latitude')).toThrow(ValidationError);
   });
 });

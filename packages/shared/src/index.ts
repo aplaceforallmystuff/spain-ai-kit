@@ -11,5 +11,11 @@ export {
   validateSeriesCode,
   validateBlockId,
 } from './validation.js';
+export {
+  validateProvinceCode,
+  validateMunicipalityCode,
+  validateCadastralRef,
+  validateCoordinate,
+} from './validation.js';
 export { wrapToolHandler } from './error.js';
 export type { ToolResult } from './error.js';
