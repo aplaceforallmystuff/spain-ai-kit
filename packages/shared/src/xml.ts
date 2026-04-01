@@ -4,6 +4,8 @@ const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: '@_',
   textNodeName: '#text',
+  processEntities: false,
+  htmlEntities: false,
 });
 
 /**

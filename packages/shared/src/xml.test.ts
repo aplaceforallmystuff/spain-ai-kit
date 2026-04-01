@@ -27,3 +27,24 @@ describe('parseXML', () => {
     expect(result.response.data.entry).toEqual(['one', 'two']);
   });
 });
+
+describe('XML security', () => {
+  it('does not expand internal entity declarations', () => {
+    const xml = `<?xml version="1.0"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe "expanded-entity-value">
+]>
+<root>&xxe;</root>`;
+    const result = parseXML<{ root: string }>(xml);
+    expect(typeof result.root === 'string' ? result.root : '').not.toContain('expanded-entity-value');
+  });
+
+  it('does not resolve external entity references', () => {
+    const xml = `<?xml version="1.0"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<root>&xxe;</root>`;
+    expect(() => parseXML<{ root: unknown }>(xml)).toThrow('External entities are not supported');
+  });
+});
