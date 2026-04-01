@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Catastro MCP server with 9 tools (property lookup, address resolution, geocoding)
+- AEMET MCP server with 10 tools (forecasts, observations, alerts, UV, fire risk, beach conditions)
+- AEMETClient in shared package for double-call API pattern with API key management
+- Catastro validators (province code, municipality code, cadastral reference, coordinate)
+- AEMET validators (municipio code, station ID, area code)
 - Input validation for all MCP tool parameters (BOE IDs, dates, numeric IDs, series codes, block IDs)
 - Error wrapping (`wrapToolHandler`) for structured MCP error responses — no raw stack traces
 - Token-bucket rate limiting in BaseAPIClient (INE: 10 req/sec, BOE: 5 req/sec)
