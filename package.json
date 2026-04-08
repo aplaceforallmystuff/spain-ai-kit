@@ -22,7 +22,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "^22.19.17",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "nx": "^21.4.0",
@@ -40,8 +40,8 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.0",
-    "axios": "^1.11.0",
-    "fast-xml-parser": "^5.5.9"
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "axios": "^1.14.0",
+    "fast-xml-parser": "^5.5.10"
   }
 }
