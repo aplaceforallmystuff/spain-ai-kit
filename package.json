@@ -22,11 +22,11 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "^22.19.17",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "nx": "^21.4.0",
-    "prettier": "^3.0.0",
+    "nx": "^21.6.11",
+    "prettier": "^3.8.3",
     "tsx": "^4.0.0",
     "typescript": "^5.9.0",
     "vitest": "^2.0.0"
@@ -40,8 +40,8 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.0",
-    "axios": "^1.11.0",
-    "fast-xml-parser": "^5.5.9"
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "axios": "^1.15.2",
+    "fast-xml-parser": "^5.7.1"
   }
 }
