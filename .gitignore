@@ -32,3 +32,8 @@ Thumbs.db
 # Nx
 .nx/cache
 .nx/workspace-data
+
+# Environment files
+.env
+.env.local
+.env.*.local
