@@ -1,5 +1,5 @@
 import { readdir, readFile } from 'node:fs/promises';
-import { join, resolve, basename } from 'node:path';
+import { join, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -21,6 +21,8 @@ interface SearchOptions {
   limit?: number;
 }
 
+const CORPUS_PATH_ENV = 'SPAIN_AI_KIT_CORPUS_PATH';
+
 /**
  * In-memory index of the legalize-es corpus.
  * Built lazily on first search. Searches via string matching on file contents.
@@ -32,11 +34,18 @@ export class CorpusIndex {
   private corpusPath: string;
 
   constructor() {
+    const configuredPath = process.env[CORPUS_PATH_ENV]?.trim();
+    if (configuredPath) {
+      this.corpusPath = resolve(configuredPath);
+      return;
+    }
+
     // Resolve corpus path relative to the project root.
     // When running from dist/, go up to mcp/boe/, then to project root.
-    const thisDir = typeof __dirname !== 'undefined'
-      ? __dirname
-      : fileURLToPath(new URL('.', import.meta.url));
+    const thisDir =
+      typeof __dirname !== 'undefined'
+        ? __dirname
+        : fileURLToPath(new URL('.', import.meta.url));
     this.corpusPath = resolve(thisDir, '..', '..', '..', 'corpus', 'legalize-es');
   }
 
@@ -77,20 +86,20 @@ export class CorpusIndex {
           });
         }
       } catch (err) {
-        console.error(`Corpus: failed to read directory ${dirPath}:`, (err as Error).message);
+        console.error(\`Corpus: failed to read directory \${dirPath}:\`, (err as Error).message);
       }
     }
 
     this.indexed = true;
     if (process.env.SPAIN_AI_KIT_DEBUG === '1') {
       const jurisdictions = new Set(this.entries.map(e => e.jurisdiction));
-      console.error(`Corpus indexed: ${this.entries.length} laws across ${jurisdictions.size} jurisdictions`);
+      console.error(\`Corpus indexed: \${this.entries.length} laws across \${jurisdictions.size} jurisdictions\`);
       for (const j of [...jurisdictions].sort()) {
         const count = this.entries.filter(e => e.jurisdiction === j).length;
-        console.error(`  ${j}: ${count} laws`);
+        console.error(\`  \${j}: \${count} laws\`);
       }
     } else {
-      console.error(`Corpus indexed: ${this.entries.length} laws`);
+      console.error(\`Corpus indexed: \${this.entries.length} laws\`);
     }
   }
 
@@ -115,7 +124,7 @@ export class CorpusIndex {
         if (!content.toLowerCase().includes(q)) continue;
 
         // Extract matching lines with context
-        const lines = content.split('\n');
+        const lines = content.split('\\n');
         const matchingLines: string[] = [];
         for (let i = 0; i < lines.length && matchingLines.length < 3; i++) {
           if (lines[i].toLowerCase().includes(q)) {
@@ -129,7 +138,7 @@ export class CorpusIndex {
           matchingLines,
         });
       } catch (err) {
-        console.error(`Corpus: failed to read ${entry.path}:`, (err as Error).message);
+        console.error(\`Corpus: failed to read \${entry.path}:\`, (err as Error).message);
       }
     }
 
@@ -147,7 +156,7 @@ export class CorpusIndex {
     try {
       return await readFile(entry.path, 'utf-8');
     } catch (err) {
-      console.error(`Corpus: failed to read law ${entry.path}:`, (err as Error).message);
+      console.error(\`Corpus: failed to read law \${entry.path}:\`, (err as Error).message);
       return null;
     }
   }
