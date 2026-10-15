@@ -292,6 +292,10 @@ PRs and issues welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on
 
 Fork → Branch → Commit → Push → PR
 
+## Need help building or securing MCP servers?
+
+I build and maintain MCP servers like these, and I review AI and agent setups for security. If your team needs a custom server, an integration, or a security review of one you already run, see [jimchristian.net/work](https://jimchristian.net/work/) or book a [discovery session](https://jimchristian.net/discovery/).
+
 ## ⚖️ License
 
 MIT — see [LICENSE](LICENSE) for details.
