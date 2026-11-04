@@ -63,7 +63,7 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o
       "command": "npx",
       "args": ["@spain-ai-kit/aemet-mcp-server"],
       "env": {
-        "AEMET_API_KEY": "your-api-key-here"
+        "AEMET_API_KEY": "***REDACTED***"
       }
     }
   }
@@ -93,7 +93,7 @@ Add to your project's `.claude/settings.json` or global `~/.claude.json`:
       "command": "npx",
       "args": ["@spain-ai-kit/aemet-mcp-server"],
       "env": {
-        "AEMET_API_KEY": "your-api-key-here"
+        "AEMET_API_KEY": "***REDACTED***"
       }
     }
   }

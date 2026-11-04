@@ -97,7 +97,6 @@ server.tool(
   })
 );
 
-// @ts-expect-error — MCP SDK deep type instantiation with zod generics
 server.tool(
   'search_operations',
   'Search INE statistical operations by keyword (in Spanish). Returns matching operations with their IDs.',
@@ -199,7 +198,6 @@ server.tool(
   })
 );
 
-// @ts-expect-error — MCP SDK deep type instantiation with zod generics
 server.tool(
   'get_table_data',
   'Get actual data from an INE table. Returns time series with values. Use nult parameter to limit to most recent data points.',

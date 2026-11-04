@@ -56,12 +56,11 @@ interface BOEDocumentResponse {
 
 const server = new McpServer({
   name: '@spain-ai-kit/boe-mcp-server',
-  version: '0.1.1',
+  version: '0.1.2',
 });
 
 // --- Live API Tools ---
 
-// @ts-expect-error — MCP SDK deep type instantiation with zod generics
 server.tool(
   'search_legislation',
   'Search Spanish consolidated legislation by keyword, date range, or scope. Returns matching laws with metadata. Keywords should be in Spanish.',

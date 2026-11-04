@@ -43,7 +43,7 @@ describe('CorpusIndex', () => {
     await mkdir(jurisdictionPath, { recursive: true });
     await writeFile(
       join(jurisdictionPath, 'BOE-A-TEST-1.md'),
-      '# Test law\n\nProtección de datos y derechos fundamentales.',
+      '# Test law\n\nProtección de datos y derechos fundamentales.'
     );
 
     process.env.SPAIN_AI_KIT_CORPUS_PATH = corpusPath;
@@ -55,6 +55,10 @@ describe('CorpusIndex', () => {
       const results = await corpus.search('protección');
       expect(results).toHaveLength(1);
       expect(results[0].boeId).toBe('BOE-A-TEST-1');
+      expect(results[0].matchingLines).toEqual(['Protección de datos y derechos fundamentales.']);
+      expect(await corpus.readLaw('BOE-A-TEST-1')).toBe(
+        '# Test law\n\nProtección de datos y derechos fundamentales.'
+      );
     } finally {
       await rm(root, { recursive: true, force: true });
     }

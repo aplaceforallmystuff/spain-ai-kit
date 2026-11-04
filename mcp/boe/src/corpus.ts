@@ -43,9 +43,7 @@ export class CorpusIndex {
     // Resolve corpus path relative to the project root.
     // When running from dist/, go up to mcp/boe/, then to project root.
     const thisDir =
-      typeof __dirname !== 'undefined'
-        ? __dirname
-        : fileURLToPath(new URL('.', import.meta.url));
+      typeof __dirname !== 'undefined' ? __dirname : fileURLToPath(new URL('.', import.meta.url));
     this.corpusPath = resolve(thisDir, '..', '..', '..', 'corpus', 'legalize-es');
   }
 
@@ -86,20 +84,22 @@ export class CorpusIndex {
           });
         }
       } catch (err) {
-        console.error(\`Corpus: failed to read directory \${dirPath}:\`, (err as Error).message);
+        console.error(`Corpus: failed to read directory ${dirPath}:`, (err as Error).message);
       }
     }
 
     this.indexed = true;
     if (process.env.SPAIN_AI_KIT_DEBUG === '1') {
-      const jurisdictions = new Set(this.entries.map(e => e.jurisdiction));
-      console.error(\`Corpus indexed: \${this.entries.length} laws across \${jurisdictions.size} jurisdictions\`);
+      const jurisdictions = new Set(this.entries.map((e) => e.jurisdiction));
+      console.error(
+        `Corpus indexed: ${this.entries.length} laws across ${jurisdictions.size} jurisdictions`
+      );
       for (const j of [...jurisdictions].sort()) {
-        const count = this.entries.filter(e => e.jurisdiction === j).length;
-        console.error(\`  \${j}: \${count} laws\`);
+        const count = this.entries.filter((e) => e.jurisdiction === j).length;
+        console.error(`  ${j}: ${count} laws`);
       }
     } else {
-      console.error(\`Corpus indexed: \${this.entries.length} laws\`);
+      console.error(`Corpus indexed: ${this.entries.length} laws`);
     }
   }
 
@@ -124,7 +124,7 @@ export class CorpusIndex {
         if (!content.toLowerCase().includes(q)) continue;
 
         // Extract matching lines with context
-        const lines = content.split('\\n');
+        const lines = content.split('\n');
         const matchingLines: string[] = [];
         for (let i = 0; i < lines.length && matchingLines.length < 3; i++) {
           if (lines[i].toLowerCase().includes(q)) {
@@ -138,7 +138,7 @@ export class CorpusIndex {
           matchingLines,
         });
       } catch (err) {
-        console.error(\`Corpus: failed to read \${entry.path}:\`, (err as Error).message);
+        console.error(`Corpus: failed to read ${entry.path}:`, (err as Error).message);
       }
     }
 
@@ -156,7 +156,7 @@ export class CorpusIndex {
     try {
       return await readFile(entry.path, 'utf-8');
     } catch (err) {
-      console.error(\`Corpus: failed to read law \${entry.path}:\`, (err as Error).message);
+      console.error(`Corpus: failed to read law ${entry.path}:`, (err as Error).message);
       return null;
     }
   }
