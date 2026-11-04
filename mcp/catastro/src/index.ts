@@ -63,7 +63,6 @@ server.tool(
   })
 );
 
-// @ts-expect-error — MCP SDK deep type instantiation with zod generics
 server.tool(
   'list_municipalities',
   'List municipalities in a Spanish province. Use the province code from list_provinces.',
@@ -246,7 +245,6 @@ server.tool(
   })
 );
 
-// @ts-expect-error — MCP SDK deep type instantiation with zod generics
 server.tool(
   'find_properties_nearby',
   'Find cadastral references within a distance of given coordinates.',

@@ -63,7 +63,7 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o
       "command": "npx",
       "args": ["@spain-ai-kit/aemet-mcp-server"],
       "env": {
-        "AEMET_API_KEY": "your-api-key-here"
+        "AEMET_API_KEY": "***REDACTED***"
       }
     }
   }
@@ -93,7 +93,7 @@ Add to your project's `.claude/settings.json` or global `~/.claude.json`:
       "command": "npx",
       "args": ["@spain-ai-kit/aemet-mcp-server"],
       "env": {
-        "AEMET_API_KEY": "your-api-key-here"
+        "AEMET_API_KEY": "***REDACTED***"
       }
     }
   }
@@ -254,9 +254,21 @@ average property density per municipality?"
 
 Make sure `AEMET_API_KEY` is set in the `env` block of your config, not as a command-line argument. The key should be the raw string from AEMET's email, no quotes needed in the JSON value.
 
-### BOE corpus search says "not found"
+### BOE corpus search says "not available"
 
-The legislation corpus requires the git submodule. If you're using `npx`, the corpus isn't available (it's 500MB+). For corpus search, clone the repo with `--recurse-submodules` and run locally.
+The legislation corpus is optional because it is large and is not bundled into the published npm server package.
+
+For local development, clone the repository with the legalize-es submodule:
+
+```bash
+git clone --recurse-submodules https://github.com/aplaceforallmystuff/spain-ai-kit.git
+cd spain-ai-kit
+npm install
+```
+
+For installed-package deployments, set `SPAIN_AI_KIT_CORPUS_PATH` to the path of an existing legalize-es corpus directory. The directory must contain jurisdiction folders such as `es` and `es-vc`.
+
+The BOE corpus tools report an informational configuration message when the corpus is unavailable; they do not instruct an AI agent to execute shell commands.
 
 ### Catastro returns "no existe"
 

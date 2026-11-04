@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### BOE corpus fix
+
+- BOE package 0.1.2 adds `SPAIN_AI_KIT_CORPUS_PATH` for installed-package deployments, informational corpus diagnostics, and search/read regression coverage (community PR #40 by @Ayorinha; fixes #38).
+- Corrected escaped template literals and preserved newline-based search snippets during integration.
+- Updated the BOE package documentation and refreshed release dependencies; the BOE workspace audit reports no vulnerabilities.
+- Use the patched Zod package through its compatible `zod/v3` entry point across workspaces and remove obsolete TypeScript suppression comments, so the monorepo production audit also passes.
+
 ### Security
 
 - Resolved all 83 open Dependabot alerts (7 critical, 23 high, 49 moderate, 4 low) — every alert on the repository now reports `fixed`, and `npm audit` reports 0 vulnerabilities

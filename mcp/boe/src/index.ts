@@ -56,12 +56,11 @@ interface BOEDocumentResponse {
 
 const server = new McpServer({
   name: '@spain-ai-kit/boe-mcp-server',
-  version: '0.1.1',
+  version: '0.1.2',
 });
 
 // --- Live API Tools ---
 
-// @ts-expect-error — MCP SDK deep type instantiation with zod generics
 server.tool(
   'search_legislation',
   'Search Spanish consolidated legislation by keyword, date range, or scope. Returns matching laws with metadata. Keywords should be in Spanish.',
@@ -389,7 +388,7 @@ server.tool(
 
 server.tool(
   'search_corpus',
-  'Search the legalize-es legislation corpus (12,000+ Spanish laws as Markdown files). Searches full law text by keyword. Requires the legalize-es git submodule to be initialized.',
+  'Search the legalize-es legislation corpus (12,000+ Spanish laws as Markdown files). Searches full law text by keyword. The corpus is optional and can be supplied through the SPAIN_AI_KIT_CORPUS_PATH environment variable.',
   {
     query: z.string().describe('Search keyword (in Spanish)'),
     jurisdiction: z
@@ -412,7 +411,7 @@ server.tool(
           content: [
             {
               type: 'text' as const,
-              text: 'legalize-es corpus not found. Run `git submodule update --init` in the spain-ai-kit root to enable corpus search.',
+              text: 'The legalize-es corpus is not available. Configure SPAIN_AI_KIT_CORPUS_PATH to point to a legalize-es corpus directory, then retry.',
             },
           ],
         };
@@ -440,7 +439,7 @@ server.tool(
 
 server.tool(
   'read_corpus_law',
-  'Read the full Markdown text of a specific law from the legalize-es corpus by its BOE identifier or filename.',
+  'Read the full Markdown text of a specific law from the legalize-es corpus by its BOE identifier or filename. The corpus is optional and can be supplied through the SPAIN_AI_KIT_CORPUS_PATH environment variable.',
   {
     identifier: z
       .string()
@@ -457,7 +456,7 @@ server.tool(
           content: [
             {
               type: 'text' as const,
-              text: 'legalize-es corpus not found. Run `git submodule update --init` in the spain-ai-kit root to enable corpus reading.',
+              text: 'The legalize-es corpus is not available. Configure SPAIN_AI_KIT_CORPUS_PATH to point to a legalize-es corpus directory, then retry.',
             },
           ],
         };

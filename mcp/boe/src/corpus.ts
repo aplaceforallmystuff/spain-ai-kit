@@ -1,5 +1,5 @@
 import { readdir, readFile } from 'node:fs/promises';
-import { join, resolve, basename } from 'node:path';
+import { join, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -21,6 +21,8 @@ interface SearchOptions {
   limit?: number;
 }
 
+const CORPUS_PATH_ENV = 'SPAIN_AI_KIT_CORPUS_PATH';
+
 /**
  * In-memory index of the legalize-es corpus.
  * Built lazily on first search. Searches via string matching on file contents.
@@ -32,11 +34,16 @@ export class CorpusIndex {
   private corpusPath: string;
 
   constructor() {
+    const configuredPath = process.env[CORPUS_PATH_ENV]?.trim();
+    if (configuredPath) {
+      this.corpusPath = resolve(configuredPath);
+      return;
+    }
+
     // Resolve corpus path relative to the project root.
     // When running from dist/, go up to mcp/boe/, then to project root.
-    const thisDir = typeof __dirname !== 'undefined'
-      ? __dirname
-      : fileURLToPath(new URL('.', import.meta.url));
+    const thisDir =
+      typeof __dirname !== 'undefined' ? __dirname : fileURLToPath(new URL('.', import.meta.url));
     this.corpusPath = resolve(thisDir, '..', '..', '..', 'corpus', 'legalize-es');
   }
 
@@ -83,10 +90,12 @@ export class CorpusIndex {
 
     this.indexed = true;
     if (process.env.SPAIN_AI_KIT_DEBUG === '1') {
-      const jurisdictions = new Set(this.entries.map(e => e.jurisdiction));
-      console.error(`Corpus indexed: ${this.entries.length} laws across ${jurisdictions.size} jurisdictions`);
+      const jurisdictions = new Set(this.entries.map((e) => e.jurisdiction));
+      console.error(
+        `Corpus indexed: ${this.entries.length} laws across ${jurisdictions.size} jurisdictions`
+      );
       for (const j of [...jurisdictions].sort()) {
-        const count = this.entries.filter(e => e.jurisdiction === j).length;
+        const count = this.entries.filter((e) => e.jurisdiction === j).length;
         console.error(`  ${j}: ${count} laws`);
       }
     } else {
